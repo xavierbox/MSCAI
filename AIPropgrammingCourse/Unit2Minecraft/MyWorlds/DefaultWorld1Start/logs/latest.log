@@ -1,0 +1,24 @@
+[23:38:19] [Server thread/INFO]: Starting minecraft server version 1.12.2
+[23:38:19] [Server thread/INFO]: Loading properties
+[23:38:19] [Server thread/INFO]: Default game type: SURVIVAL
+[23:38:19] [Server thread/INFO]: Generating keypair
+[23:38:19] [Server thread/INFO]: Starting Minecraft server on *:54590
+[23:38:19] [Server thread/INFO]: Using default channel type
+[23:38:20] [Server thread/INFO]: Preparing level "Untitled World"
+[23:38:20] [Server thread/INFO]: Loaded 488 advancements
+[23:38:20] [Server thread/INFO]: Preparing start region for level 0
+[23:38:21] [Server thread/INFO]: Preparing spawn area: 12%
+[23:38:22] [Server thread/INFO]: Preparing spawn area: 30%
+[23:38:23] [Server thread/INFO]: Preparing spawn area: 50%
+[23:38:24] [Server thread/INFO]: Preparing spawn area: 74%
+[23:38:25] [Server thread/INFO]: Preparing spawn area: 92%
+[23:38:26] [Server thread/INFO]: Done (5.640s)! For help, type "help" or "?"
+[23:38:26] [Server thread/INFO]: Stopping the server
+[23:38:26] [Server thread/INFO]: Stopping server
+[23:38:26] [Server thread/INFO]: Saving players
+[23:38:26] [Server thread/INFO]: Saving worlds
+[23:38:26] [Server thread/INFO]: Saving chunks for level 'Untitled World'/overworld
+[23:38:27] [Server thread/INFO]: Saving chunks for level 'Untitled World'/the_nether
+[23:38:27] [Server thread/INFO]: Saving chunks for level 'Untitled World'/the_end
+[23:38:28] [Server Shutdown Thread/INFO]: Stopping server
+[23:38:28] [Server Shutdown Thread/INFO]: Saving players

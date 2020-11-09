@@ -1,0 +1,134 @@
+
+
+K-nearest neighbours algorithm
+Files:
+Source code:NearestNeighbours-3.R
+
+Example of use cases:NearestNeighboursTests-4.R
+
+
+  
+
+Description (Links to an external site.)
+The attached script implements a K-nearest neighbours algorithm. A single function is provided, its signature is:
+
+knnClassify <- function( labelledData, k, unlabelledData)
+
+Arguments 
+labelledData: The first parameter (labelledData) must be a matrix or data.frame.  It is expected to contain the labels in the last column and the features in the first N-1 columns. Every row corresponds to an observation in the training dataset.
+
+ 
+
+labelledData = LaTeX: \left(\begin{matrix}
+x11 & x12 & \cdots & x1n & y_1\\
+x21 & x22 & \cdots & x2n & y_2\\
+& & \cdots & \\
+xm_1 & xm_2 & \cdots & xmn & y_m\\
+
+
+
+
+\end{matrix}\right)( x 11 x 12 ⋯ x 1 n y 1 x 21 x 22 ⋯ x 2 n y 2 ⋯ x m 1 x m 2 ⋯ x m n y m ) Eq (1) 
+
+In Eq. (1) above, the terms LaTeX: y_my m correspond to the labels for the m training examples. Each row 1,2,...m, corresponds to an example in the training set (out of m examples). The components LaTeX: xi,nx i , n along each row n correspond to the i features.  Note that in R, the dimensions of this parameter can be queried with the function dim(x)
+
+k: The parameter corresponds to the number of neighbours used to predict the labels for each point in the test dataset.  It must be a positive number greater than or equal to 1.  
+
+labelledData: The third parameter (unlabelledData) must be a matrix or data.frame.  It is expected to contain one column less than labelledData. The columns should correspond to the same features in the first N-1 columns of labelledData.   
+
+Return
+An integer vector. The length of the vector corresponds to the number of rows in the unlabelledData. It can be queried using the length() method available for vectors. The elements LaTeX: x_{n\:}x nin the vector corresponds to the nth row in the unlabelledData parameter.  The contents of the vector are the labels as (integers) estimated by the KNN algorithm. 
+
+Notes
+The KNN algorithm estimates the labels of unlabelled data points LaTeX: u ={u_1,u_2,u_3...u_n}u = u 1 , u 2 , u 3 . . . u nas a function of the known labelled data points LaTeX: T={t_1,t_2,...t_n}T = t 1 , t 2 , . . . t n. For each point LaTeX: u_iu iin U, the estimated label will be computed as function LaTeX: f(u_i, T)f ( u i , T )of  the distance between LaTeX: u_iu iand the closest K points to LaTeX: u_iu i found inLaTeX: TT.  The algorithm does not specify a particular metric for distance.   It could be the Euclidean distance, or the Manhattan distance as an example. There are also several variants to the function LaTeX: f(u_i, T)f ( u i , T ). One option, as an example, is to estimate the label as the mode of the set of labels of the k nearest neighbours. The distance in this case enters in the estimation while selecting from the labelled dataset only the closest neighbours. An alternative implementation can estimate the labels by an inverse-distance weighted arithmetic average of the labels  of the K-nearest neighbours to u_i as opposed to taking the mode. In this case, the resulting label would be floating point number that would be rounded to an integer value in a later step. Altogether, the algorithm relies in selecting the closest K  observations to each unlabelled point LaTeX: u_iu i to then estimate the label in LaTeX: u_iu i  according to the statistics of the K-closest observations.
+This implementation 
+In this implementation the metric for distance is the Euclidean distance and the function LaTeX: f(u_i, T)f ( u i , T ) corresponds to the mode. Namely, LaTeX: f(u_i, T)f ( u i , T ) computes the label as the most frequent observed value of the label in the k-neighbours.  
+
+NOTE THAT, there is no guarantee that the set of labels to have a single mode. For instance, the 4-nearest neighbour labels could be 
+
+labels = { 0,1,1,0 }. In this case, and in any situation where there is not a single-mode, the mode with the smallest numerical value is considered.  
+
+ 
+
+The source code in R programming language is attached in the file: NearestNeighbours-3.R
+
+Examples
+These are found in the enclosed file NearestNeighboursTests-4.R
+
+Test Case 1 
+
+Test1.PNG
+
+Line 8 ands 9 creates a matrix with the data o six points along a line and labels 1, 2,...6 and then convert the matrix to a data.frame. A more  meaningful name for the columns is assigned in Line 11 ( the code does not depend on that though).   The labelled dataset is printed in line 12. Line 14 selects the 4 first points  of the training and  make a copy of them in the test set. It is known exactly what the predicted labels should be without any calculations. These predictions are obtained in line 17 and printed in line 18.  As a verification step, line 19 confirms that these predictions are a vector of the class integer. The results are: 
+
+Test1Results.PNG
+
+The first prediction is obvious. The second point has 2 neighbours, one with label 2 and another one with label 1. This is a multi-model situation and label = 1 is returned. This highlights the limitations of this approach, a distance-weighted method would be better.  In every case afterwards, the numerically smallest mode is returned. 
+
+Test Case 2
+
+Here the method is tested with matrix arguments and single-mode cases.
+
+Test2-2.PNGResults: 
+
+predictions: 1 1 3 5
+
+The first and second points in the test set (line 28), are closer to the examples 1,2 and 3 (line 27). Two of these have the label 1, so that label is returned twice in the predictions.  The point 3 in the test, is closest to the examples 3,4 and 5 in the training set. The single mode is 3, so the return is correct. The last point in the test set is close to two points in the training with the label = 5. Hence the correct result 5 is returned.  
+
+Test Case 3
+
+The figure below shows the results of the last test case enclosed with this document.  Here, a number of hypothetical observations is shown in an R^2 space. The observations are labelled with either the value 1 (red-filled symbols) or the value 0 (blue-filled symbols).  The algorithm was then applied to label a number of hypothetical unlabelled data points (test set) distributed along a grid in the same space. The regular distribution  was produced solely with the intention of making obvious what the correct result could be. The algorithm was ran using  a parameter for k as k = 3. 
+
+Example.PNG   
+
+The figure shows a clearly defined decision boundary between the observations.  Points in the interval LaTeX: x < 7.5 x < 7.5 would be labelled as 1, in correspondence with the closest observations (red symbols) and they would be labelled as 0 otherwise. The example shown was solved with pen and paper to verify the correctness of the implementation.  This example is found in the enclosed in the examples file listed before. 
+
+ 
+
+Potential improvements
+The implementation does not handle exceptions.  An additional improvement would be to use the distance-weighted method to estimate the labels.
+
+Assignment details 
+The function
+
+knnClassify <- function( labelledData, k, unlabelledData) 
+
+is the only one to be directly used. Some auxiliary functions are defined inside it but these do not have any particular application other than as helpers of the main KNN function. Hence, these were declared inside the main function.  One of these helpers is:  
+
+get_keuclid_dist_labels<-function(labelledData, point_df, k )
+
+It returns a data.frame with one column with the distances to the k-neighbours sorted in ascending order, and another column with the labels of those examples. The distance is not strictly needed since the implementation assigns labels according to the mode. It was left as it is, with the intention of implementing a distance-weighted method during the course and potentially during the discussions of this assignment. 
+
+The function  vals_mode <- function(data)  is used to compute the mode.  The method may be inefficient. I could not find an off-the-shelve method in the help section  and by far, creating this function was the most challenging part of the assignment. 
+
+NOTE THAT, this function will return a vector x (length can be queried with length()) in the cases where there is not a single mode.  For instance, the 4-nearest neighbour labels could be labels = { 0,1,1,0 }. In this case, the vector returned would be {0,1}.
+
+Further documentation 
+The code is not even 40-lines long after removing comments.  These comments are basically before or after every instruction in the source code. I trust it would be easy to follow along.   This is an  example:
+
+(...)
+
+    #also add some more meaningful column names 
+    dist <- data.frame( "distance"=dist,  "label" = labelledData[,nfeatures+1])
+
+    #now lets sort the data in ascending order according to distance 
+    dist <- dist [ order( dist["distance"]), ] 
+    
+    #keep only the first k neighbours 
+    dist <- dist [ 1:k, ]
+
+(...)
+ 
+
+Thanks for your time to go through this document. 
+
+Any comments would be very much appreciated. Please let me know also if there is any problems with the files. I had to upload them multiple times. I guess they are fine but it wouldnt surprise me if they arent. 
+
+ 
+
+Thanks  again 
+
+Xavier
+
+ Reply
+ 

@@ -1,0 +1,1 @@
+python tools/playgame.py "python MyBotImproved1.py" "python tools/sample_bots/python/RandomBot.py" --viewradius 55 --map_file tools/maps/example/tutorial2.map --log_dir game_logs --food none --turns 6 --scenario  --player_seed 7  -e

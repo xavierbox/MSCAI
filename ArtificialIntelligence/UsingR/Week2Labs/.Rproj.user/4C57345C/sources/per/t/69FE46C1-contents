@@ -1,0 +1,264 @@
+#
+#
+#  WORKSHEET 2, solutions task1, task 2 (kmeans) and task 3 (competitive learning)
+# 
+#
+#Aim
+#
+#In this lab you will explore the use of R facilities for numerical processing and 
+#their use for implementing Machine
+#Learning algorithms. After completing this sheet successfully, you will
+
+#• know how to write R scripts and functions, and how to use them,
+#• have carried out K-means clustering and graphically displayed its results,
+#• have experience of implementing some essential elements of unsupervised vector quantisation in code.
+
+#Scripts and functions are important devices to organise your work, and to get the 
+#most out of completing worksheets. Please see Appendix A for some further guidance and advice.
+#This worksheet is not marked and no submission is required. You are most welcome 
+#to post any questions, comments or results on Canvas
+
+
+#TASK 1 
+#(a) Write a script that displays “hello 7wcm0054“ 5 times. Use the sourCe function to run your script.
+#(b) Write a function that takes a number n as a parameter and returns “hello” repeated n times.
+
+write_something <- function( n_times = 5, preffix = "", suffix = "", sep = " " )
+{
+  sentence = paste( preffix, suffix, sep = sep)
+  for( n in 1:n_times){
+    print( sentence )
+  } 
+}
+
+#(a)
+times = 5
+preffix = "hello"
+suffix = "7wcm0054"
+write_something(times,preffix, suffix,sep=" ")
+
+
+#(b)
+write_something(times,"hello","",sep="")
+
+
+##################################################
+#                        TASK 2
+#                        KMEANS
+##################################################
+
+
+#(a)
+#Create a data frame of data points X = {(1,1), (2,1), (3,1), (5,5), (5,6), (6,5), (6,6)} in
+#which each point occupies one row. Also create a matrix of initial codevectors C = {(2,2),(2,3)}
+
+#the dataframe
+x = c(1,2,3,5,5,6,6)
+y = c(1,1,1,5,6,5,6)
+df = data.frame( "x" = x, "y" = y)
+
+#codevectors
+v1 = c(2,2)
+v2 = c(2,3)
+codevectors = matrix( data = c(v1,v2), nrow= 2, ncol = 2)
+codevectors
+
+#(b)Show the data and codevectors in one plot, using the plot and points functions of the graphics
+#package. You should use different colours and symbols for the data points and the codevectors.
+#Can you estimate from the plot what the initial clusters will be? And on that basis, where would you
+#expect the codevectors to be after the first iteration of the K-means algorithm?
+ 
+
+library(graphics)
+ 
+#create empty plot
+x_limits = range( df$x )
+y_limits = range( df$y )
+plot(1,type='n',xlim=x_limits,ylim=y_limits,xlab='X', ylab='Y')
+#plot codevectors 
+for(chart in 1:nrow( codevectors )) points(x = codevectors[chart,1], y = codevectors[chart,2], pch="*",col="black",cex=2, t = "p")
+  
+
+#plot the data 
+points( x = df$x, y = df$y,  xlim= x_limits, ylim=y_limits,col="red", t = "p" , pch="o" )
+
+
+#(c)
+library(stats)
+source("plot_kmeans.r")  #this is to plot 
+
+#simple kmeans 
+k<-  kmeans( x = df, centers = codevectors, iter.max = 10)
+
+plot_kmeans( k , df, colnames(df)[1], colnames(df)[2] )
+
+
+
+#(d)
+#Consult the kmeans documentation to find out how to limit the number of iterations executed by the
+#function. Use this to have each call to kmeans run one single iteration only, and use this to graphically
+#display the data and the codevectors for each iteration, starting with the initial codevectors (see above)
+#and ending when the algorithm has converged (i.e. when the codevectors do not change in an iteration).
+codevectors = matrix( data = c(v1,v2), nrow= 2, ncol = 2)
+
+#step by step kmeans and plot 
+kk = historic_kmeans( df, codevectors, max_iterations = 100, change_threshold = 0.01 )
+plot_kmeans( kk, df,colname1="x", colname2="y")
+
+#(e) Repeat the same thing with the dataset provided as a csv file 
+data1 = read.csv( file.path(getwd(), "kmeansdata01.csv"), header = TRUE)
+#View(data1)
+
+#empty plot 
+plot( 1, t = "n", xlim=range(data1$x), ylim=range(data1$y), xlab="X axis", ylab="y axis" )
+points( x = data1$x, y = data1$y, t = "p", xlim=range(data1$x), ylim=range(data1$y), xlab="X axis", ylab="y axis" )
+
+#create three codevectors from pre-existing poinsts
+p1 <- c( data1[1,]$x, data1[1,]$y )
+p2 <- c( data1[2,]$x, data1[2,]$y )
+p3 <- c( data1[3,]$x, data1[3,]$y )
+
+source("plot_kmeans.r")  #this is to plot 
+codevectors = matrix( data = c(p1,p2,p3), ncol = 2)
+k <- kmeans( x = data1, centers =codevectors, iter.max = 100 ) 
+plot_kmeans( k, data1  )
+
+#now with some arrows 
+codevectors <- matrix( data = c(p1,p2,p3), ncol = 2)
+k <- historic_kmeans( df = data1, codevectors =codevectors, max_iterations = 1000) 
+plot_kmeans( k, data1  )
+
+##other dataset 
+data1 = read.csv( file.path(getwd(), "kmeansdata02.csv"), header = TRUE)
+#create 5 codevectors from pre-existing poinsts
+p1 <- c( data1[1,]$x, data1[1,]$y )
+p2 <- c( data1[2,]$x, data1[2,]$y )
+p3 <- c( data1[3,]$x, data1[3,]$y )
+p4 <- c( data1[4,]$x, data1[4,]$y )
+p5 <- c( data1[5,]$x, data1[5,]$y )
+source("plot_kmeans.r")  #this is to plot 
+codevectors = matrix( data = c(p1,p2,p3,p4,p5), ncol = 2)
+k <- historic_kmeans( df = data1, codevectors =codevectors, max_iterations = 1000) 
+plot_kmeans( k, data1  )
+
+#end
+
+
+
+##################################################
+#                 TASK 3 
+#       SIMPLE COMPETITIVE LEARNING  
+#################################################
+
+#functions used in the task 
+
+#returns a dataframe with randomly selected rows from the input dataframe (data)
+#the number of rows extracted is passed as parameter. This is for kmeans but technically 
+#it is not needed. the kmeans function does exactly the same if instead of passing the 
+#codevectors, we pass the number of clusters. For completenes, it was implemented here 
+#but it is niot needed
+generate_codevectors_df<-function(data, number )
+  {
+    #for the codevectors we will construct a dataframe with random rows of the data 
+    codevectors<- data.frame()
+    for( n in 1L:number){
+    p<- data[ sample( 1L:nrow(data),1 , replace = FALSE), ]
+    codevectors <- rbind ( codevectors, p ) #this is now a dataframe 
+    }
+    
+    return( codevectors )
+  }
+
+#returns a list. The item1 is a matreix of distances from the point to the 
+#codevectors. The second element in the list is the index of the codevector 
+#that is actuallty closer to the point, i.e. the winner
+get_distance_and_winner<-function( codevectors_df , point_df )
+{
+  #distance between the point to all the codevectors 
+  dist <- data.frame() 
+  for( n in 1:nrow(codevectors_df)) dist<- rbind(  dist, (codevectors_df[n,]- point_df[1,]) ) 
+  dist<- as.matrix(sqrt(rowSums( dist*dist) ), ncol = 1 )
+  
+  #winning index
+  winning_codevector_index = which.min( dist )
+  
+  #lets select only the row of the winning codevector
+  dist<- dist[ winning_codevector_index, ]
+  
+  #return the distance -which will be needed- and the codevector index 
+  return( list( dist, winning_codevector_index ))
+}
+
+#this performs a some steps in the simple competitive learning algorithm
+#if the last argument is set to 1, then only one step is performed. It will 
+#always return the last updated state of the codevectors and the index of thecodevectors 
+#that was updated last -winner- of the last step
+update_codevectors_simple <- function( df, codevectors, learning_rate, steps = 1 )
+{
+  for(n in 1:steps){
+  #RANDOM POINT IN THE DATAFRAME
+  p = df[ sample( 1L:nrow(df), 1), ] #this is indeed another dataframe 
+  
+  #distance between the point to THE WINNER and the winner index
+  result<- get_distance_and_winner( codevectors_df = codevectors , point_df =p )
+  index_winner_vec = result[[2]]
+  #dist_to_p = result[[1]] 
+  
+  #c_new = c + learning_rate* ( p - winner_codevector)
+  codevectors[index_winner_vec,  ] <- codevectors[index_winner_vec,  ] + learning_rate * ( p - codevectors[index_winner_vec,  ])
+   
+  }
+  
+  return( list( codevectors, index_winner_vec ))
+  
+}
+
+
+
+set.seed(33305)
+
+#learning rate 
+learning_rate  = 0.15
+
+#we will use this dataset as example 
+#data1 = read.csv( file.path(getwd(), "kmeansdata01.csv"), header = TRUE)
+df1 = read.csv( file.path(getwd(), "kmeansdata01.csv"), header = TRUE) #dataframe 
+df1<- df1[ which( df1$x <6) ]
+df1<- df1[ which( df1$y <6) ]
+data1<-df1
+
+#generate some example codevectors
+codevectors <- generate_codevectors_df( data = df1, number = 3 )
+
+#plot all the points 
+plot( x = data1$x, y = data1$y, t = "p", xlim=range(data1$x), ylim=range(data1$y), xlab="X axis", ylab="y axis", main="Simple competitive learning" )
+
+#add the original codevectors to the plot as reference
+points( x = codevectors$x, y = codevectors$y, t = "p", col="black", cex =1.5, bg="blue",pch=25   )
+
+for( n in 1:100)
+  {
+  
+  old_codevec <- codevectors
+  result <-update_codevectors_simple( df1, codevectors, learning_rate)
+  codevectors<-result[[1]]
+  index<-result[[2]]
+
+  #add arrow to plot 
+  arrows( old_codevec[index,]$x, old_codevec[index,]$y,codevectors[index,]$x,codevectors[index,]$y, angle = 15,length=0.08,  col='black', lwd=2 )
+  }
+
+points( x = codevectors$x, y = codevectors$y, t = "p", col="black", cex =2.0, bg="red",pch=25   )
+legend(2.4,3, legend=c("Initial", "Final"), col=c("Blue","Red"),pch=25,cex=0.8 )
+
+####################################
+
+
+
+
+
+
+
+
+
+  
